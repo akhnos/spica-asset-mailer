@@ -35,8 +35,8 @@ function _sendEmail(email, subject, message) {
         host: "smtp.yandex.com",
         port: 465,
         auth: {
-            user: "noreply@spicaengine.com",
-            pass: "Dream_Har14"
+            //user: "<your User name>",
+            //pass: "<your SMTP password>"
         },
         secure: true
     });
