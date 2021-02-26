@@ -1,0 +1,145 @@
+# MAIL TEMPLATE BUCKET
+apiVersion: bucket/v1
+kind: Schema
+metadata:
+  name: mailer.templates
+spec:
+  title: Mailer - Templates
+  description: You can add your mail templates here
+  acl:
+    write: "true==true"
+    read: "true==true"
+  properties:
+    title:
+      type: string
+      description: "Title of your mail template"
+      options:
+        position: left
+        visible: true
+    description:
+      type: textarea
+      description: "Describe you mail template"
+      options:
+        position: right
+        visible: true
+    subject:
+      type: string
+      description: "Mail subject"
+      options:
+        position: left
+        visible: true
+    template:
+      type: string
+      description: "You mail template name"
+      options:
+        position: left
+        visible: true
+    content:
+      type: richtext
+      description: "Mail content"
+      options:
+        position: bottom
+        visible: true
+  primary:
+    - title
+---
+# MAIL REQUESTS BUCKET
+apiVersion: bucket/v1
+kind: Schema
+metadata:
+  name: mailer.requests
+spec:
+  title: Mailer - Requests
+  description: The system will send a mail automatically when you add new entry to this bucket.
+  acl:
+    write: "true==true"
+    read: "true==true"
+  properties:
+    title:
+      type: string
+      description: "Title of your mail request"
+      options:
+        position: left
+        visible: true
+    email:
+      type: array
+      description: "Mail subject"
+      items: 
+        type: string
+      options:
+        position: left
+        visible: true
+    template:
+      type: string
+      description: "You mail template name"
+      options:
+        position: left
+        visible: true
+    variables:
+      type: textarea
+      description: "Mail variables"
+      options:
+        position: right
+        visible: true
+    created_at:
+      type: date
+      description: "Mail request date"
+      options:
+        position: left
+        visible: true
+      default: ":created_at"
+  primary:
+    - title
+---
+# API KEY
+apiVersion: passport/v1
+kind: ApiKey
+metadata:
+  name: mailer-apikey
+spec:
+  name: Secret Api Key For Mailer
+  policies:
+    - BucketFullAccess
+---
+# FUNCTION
+apiVersion: function/v1
+kind: Function
+metadata:
+  name: mailer
+spec:
+  title: Mailer API
+  description: Manages your mail flow automatically
+  timeout: 10
+  code: ./function/triggers.js
+  runtime:
+    name: Node
+    language: Javascript
+  environment:
+    - name: MAILER_API_KEY
+      valueFrom:
+        resourceFieldRef:
+          apiKeyName: mailer-apikey
+    - name: TEMPLATES_BUCKET_ID
+      valueFrom:
+        resourceFieldRef:
+          schemaName: mail.requests
+  dependency:
+    - name: "@spica-devkit/bucket"
+      version: latest
+    - name: "nodemailer"
+      version: latest
+---
+# TRIGGER - MAILER SEND MAIL
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: trigger-send-mail
+spec:
+  name: default
+  func: mailer
+  type: bucket
+  bucketOptions:
+    bucket:
+      resourceFieldRef:
+        schemaName: mailer.requests
+    type: INSERT
