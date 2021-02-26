@@ -122,7 +122,7 @@ spec:
     - name: TEMPLATES_BUCKET_ID
       valueFrom:
         resourceFieldRef:
-          schemaName: mail.requests
+          schemaName: mailer.requests
   dependency:
     - name: "@spica-devkit/bucket"
       version: latest
