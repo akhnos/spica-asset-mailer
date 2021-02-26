@@ -61,7 +61,7 @@ spec:
       options:
         position: left
         visible: true
-    email:
+    emails:
       type: array
       description: "Mail subject"
       items: 
