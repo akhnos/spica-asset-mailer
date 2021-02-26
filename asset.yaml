@@ -123,6 +123,14 @@ spec:
       valueFrom:
         resourceFieldRef:
           schemaName: mailer.requests
+    - name: SMTP_USER
+      value: ""
+    - name: SMTP_PASSWORD
+      value: ""
+    - name: SMTP_HOST
+      value: ""
+    - name: MAIL_FROM
+      value: ""
   dependency:
     - name: "@spica-devkit/bucket"
       version: latest

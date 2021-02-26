@@ -1,6 +1,11 @@
 import * as Bucket from "@spica-devkit/bucket";
 const nodemailer = require("nodemailer");
 
+const nodeMailerUser = process.env.SMTP_USER | null;
+const nodeMailerHost = process.env.SMTP_HOST | null;
+const nodeMailerPassword = process.env.SMTP_PASSWORD | null;
+const mailFrom = process.env.MAIL_FROM | null
+
 export default async function(change) {
 
     console.log("Sending a mail. Parameters are: ", change);
@@ -30,32 +35,37 @@ export default async function(change) {
 }
 
 function _sendEmail(email, subject, message) {
-    var transporter = nodemailer.createTransport({
-        direct: true,
-        host: "smtp.yandex.com",
-        port: 465,
-        auth: {
-            //user: "<your User name>",
-            //pass: "<your SMTP password>"
-        },
-        secure: true
-    });
-
-    var mailOptions = {
-        from: "noreply@spicaengine.com",
-        to: email,
-        subject: subject,
-        html:
-            "<html><head><meta http-equiv='Content-Type' content='text/plain'></head><body><table style='width: 100%;background-color:rgb(233,233,233);font-family: arial'><tr><td>" +
-            message +
-            "</td></tr></table></body></html>"
-    };
-
-    transporter.sendMail(mailOptions, function(error, info) {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log("Email sent: " + info.response);
-        }
-    });
+    if(nodeMailerHost && nodeMailerUser && nodeMailerPassword && mailFrom){
+        var transporter = nodemailer.createTransport({
+            direct: true,
+            host: nodeMailerHost,
+            port: 465,
+            auth: {
+                user: nodeMailerUser,
+                pass: nodeMailerPassword
+            },
+            secure: true
+        });
+    
+        var mailOptions = {
+            from: mailFrom,
+            to: email,
+            subject: subject,
+            html:
+                "<html><head><meta http-equiv='Content-Type' content='text/plain'></head><body><table><tr><td>" +
+                message +
+                "</td></tr></table></body></html>"
+        };
+    
+        transporter.sendMail(mailOptions, function(error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log("Email sent: " + info.response);
+            }
+        });
+    }else{
+        console.log("Please set your all ENVIRONMENT VARIABLES");
+        return null;
+    }
 }
