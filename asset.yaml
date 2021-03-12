@@ -122,7 +122,7 @@ spec:
     - name: TEMPLATES_BUCKET_ID
       valueFrom:
         resourceFieldRef:
-          schemaName: mailer.requests
+          schemaName: mailer.templates
     - name: SMTP_USER
       value: ""
     - name: SMTP_PASSWORD

@@ -1,10 +1,10 @@
 import * as Bucket from "@spica-devkit/bucket";
 const nodemailer = require("nodemailer");
 
-const nodeMailerUser = process.env.SMTP_USER | null;
-const nodeMailerHost = process.env.SMTP_HOST | null;
-const nodeMailerPassword = process.env.SMTP_PASSWORD | null;
-const mailFrom = process.env.MAIL_FROM | null
+const nodeMailerUser = process.env.SMTP_USER || null;
+const nodeMailerHost = process.env.SMTP_HOST || null;
+const nodeMailerPassword = process.env.SMTP_PASSWORD || null;
+const mailFrom = process.env.MAIL_FROM || null
 
 export default async function(change) {
 
